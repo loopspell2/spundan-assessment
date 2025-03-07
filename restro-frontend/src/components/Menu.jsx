@@ -1,28 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-const Menu = () => {
-  const [menuItems, setMenuItems] = useState([]);
+const Menu = ({menuItems}) => {
 
-  // Fetch data (assuming you have an endpoint like '/api/menu')
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/menu", {
-          credentials: "include",
-        });
-        const data = await response.json();
-        console.log(...data.data);
-        setMenuItems(data.data);
-      } catch (err) {
-        console.error("Error fetching menu:", err);
-      }
-    };
-
-    fetchMenu();
-  }, []);
-
-  // Group the items by category
-  // const groupedMenu = []
   const groupedMenu = menuItems.reduce((acc, item) => {
     if (!acc[item.categorie]) {
       acc[item.categorie] = [];

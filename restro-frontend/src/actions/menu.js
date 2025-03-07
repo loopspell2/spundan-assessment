@@ -9,7 +9,7 @@ const updateMenu = async (menu) => {
     isSize: menu.isSize,
     size: {
       small: menu.size.small,
-      large: menu.size.larger,
+      larger: menu.size.larger,
     },
     isPrice: menu.isPrice,
     price: menu.price,
@@ -60,7 +60,6 @@ const deleteMenu = async (id) => {
 };
 
 const addMenuItem = async (menu) => {
-
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -70,7 +69,7 @@ const addMenuItem = async (menu) => {
     isSize: menu.isSize,
     size: {
       small: menu.size.small,
-      large: menu.size.larger,
+      larger: menu.size.larger,
     },
     isPrice: menu.isPrice,
     price: menu.price,
@@ -81,23 +80,40 @@ const addMenuItem = async (menu) => {
     headers: myHeaders,
     body: raw,
     redirect: "follow",
-    credentials:"include",
+    credentials: "include",
   };
-  
-  try{
+
+  try {
     const response = await fetch("http://localhost:5000/menu/", requestOptions);
     const result = await response.json();
     console.log(result);
     return result;
-  }catch(error){
+  } catch (error) {
     console.log("error while adding an menu item : ", error);
     return error;
   }
+};
 
+const getMenuItem = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/menu", {
+      credentials: "include",
+    });
+    const data = await response.json();
+    console.log(...data.data);
+    return data;
+  } catch (err) {
+    console.error("Error fetching menu:", err);
+    return {
+      status: false,
+      message: "Error while fetching menu",
+    }
+  }
 };
 
 module.exports = {
   updateMenu,
   deleteMenu,
   addMenuItem,
+  getMenuItem
 };

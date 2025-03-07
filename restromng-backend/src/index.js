@@ -6,6 +6,7 @@ const connection = require("./config/db");
 const Auth = require("./controllers/auth");
 const menuRouter = require("./controllers/menu");
 const auth = require("./middleware/auth");
+const orderRouter = require("./controllers/order");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cors({
 app.use(cookieParser());
 
 app.use('/auth', Auth);
+app.use('/order',auth, orderRouter);
 app.use('/menu',auth, menuRouter);
 
 app.get('/', (req, res) => {

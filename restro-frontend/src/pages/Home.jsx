@@ -4,43 +4,69 @@ import Menu from "../components/Menu";
 import EditnUpdateMenu from "../components/EditnUpdateMenu";
 import AddItem from "../components/AddItem";
 import { useNavigate } from "react-router-dom";
+import { getMenuItem } from "../actions/menu";
+import Actions from "../components/Actions";
+import MakeOrder from "../components/MakeOrder";
 
 const Home = () => {
+  const [menuItems, setMenuItems] = useState([]);
   const [isEditing, setIsEditing] = useState(true);
   const [isAddItem, setIsAddItem] = useState(false);
+  const [isMakeOrder, setIsMakeOrder] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = document.cookie.split('=')[1];
-    console.log("token : ",token)
-    if(!token){
-      navigate('/auth');
+    const token = document.cookie.split("=")[1];
+    console.log("token : ", token);
+    if (!token) {
+      navigate("/auth");
     }
-  },[])
+
+    const fetchMenu = async () => {
+      try {
+        const response = await getMenuItem();
+        console.log(response);
+        if (response.status) {
+          setMenuItems(response.data);
+        }
+      } catch (err) {
+        console.error("Error fetching menu:", err);
+        return;
+      }
+    };
+
+    fetchMenu();
+  }, [navigate]);
+
+  const renderContent = () => {
+    switch (true) {
+      case isMakeOrder:
+        return <MakeOrder menuItems={menuItems}/>
+      case isAddItem:
+        return <AddItem setIsAddItem={setIsAddItem} />;
+      case isEditing:
+        return <Menu menuItems={menuItems} />;
+      default:
+        return <EditnUpdateMenu menuItems={menuItems} />;
+    }
+  };
 
   return (
     <div>
       <div>
         <Navbar />
-        <div className="text-end">
-          <button
-            className="py-2 px-4 bg-emerald-400 rounded-md m-2 w-32"
-            onClick={() => setIsAddItem(!isAddItem)}
-          >
-            {!isAddItem ? "Add item" : "X"}
-          </button>
-          <button
-            className="py-2 px-4 bg-rose-500 rounded-md m-2 w-16"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            {isEditing ? "Edit" : "X"}
-          </button>
-        </div>
-        {/* <div>{isEditing ? <Menu /> : <EditnUpdateMenu />}</div> */}
 
-        <div>
-          {isAddItem ? <AddItem setIsAddItem={setIsAddItem}/> : isEditing ? <Menu /> : <EditnUpdateMenu />}
-        </div>
+        <Actions
+          isAddItem={isAddItem}
+          setIsAddItem={setIsAddItem}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          isMakeOrder={isMakeOrder}
+          setIsMakeOrder={setIsMakeOrder}
+        />
+
+        <div>{renderContent()}</div>
+
       </div>
     </div>
   );

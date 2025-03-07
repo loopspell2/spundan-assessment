@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import EditItem from "./EditItem";
 import { deleteMenu } from "../actions/menu";
 
-const EditnUpdateMenu = () => {
-  const [menuItems, setMenuItems] = useState([]);
+const EditnUpdateMenu = ({menuItems}) => {
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
     item: "",
@@ -16,23 +15,6 @@ const EditnUpdateMenu = () => {
     isPrice: false,
     price: "",
   });
-
-  // Fetch data (assuming you have an endpoint like '/api/menu')
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/menu", {
-          credentials: "include",
-        });
-        const data = await response.json();
-        setMenuItems(data.data);
-      } catch (err) {
-        console.error("Error fetching menu:", err);
-      }
-    };
-
-    fetchMenu();
-  }, []);
 
   // Group the items by category
   const groupedMenu = menuItems.reduce((acc, item) => {
