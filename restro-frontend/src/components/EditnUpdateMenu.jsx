@@ -62,7 +62,7 @@ const EditnUpdateMenu = ({menuItems}) => {
                     key={item.id}
                     className=" flex items-center justify-between my-2"
                   >
-                    <div className="font-semibold">{item.item}</div>
+                    <div className="font-semibold w-32">{item.item}</div>
                     <div className="font-light">
                       {item.isSize && (
                         <div className="flex">

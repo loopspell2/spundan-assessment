@@ -1,8 +1,13 @@
 import React from "react";
 
 const ConfirmationPopUp = (props) => {
-
-    const {setShowConfirmation, tempItem, handleSizeSelection, selectedSize, handleAddToOrder} = props;
+  const {
+    setShowConfirmation,
+    tempItem,
+    handleSizeSelection,
+    selectedSize,
+    handleAddToOrder,
+  } = props;
 
   return (
     <div>
@@ -38,7 +43,7 @@ const ConfirmationPopUp = (props) => {
                     Small (${tempItem.size.small})
                   </button>
                   <button
-                    onClick={() => handleSizeSelection("large")}
+                    onClick={() => handleSizeSelection("larger")}
                     className={`btn ${
                       selectedSize === "large"
                         ? "bg-rose-700 text-white"

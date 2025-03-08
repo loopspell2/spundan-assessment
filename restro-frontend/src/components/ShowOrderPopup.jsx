@@ -1,32 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import { placeOrder } from "../actions/order";
 
 const ShowOrderPopup = (props) => {
-  const { toggleShowOrderPopup, selectedItems } = props;
+  const { toggleShowOrderPopup, selectedItems, setSelectedItems } = props;
+  const [message, setMessage] = useState();
 
-  // Constants for GST and restaurant charges
-  const gstRate = 0.18; // 18% GST
-  const restaurantChargeRate = 0.05; // 5% Restaurant charge
+  const gstRate = 0.18;
+  const restaurantChargeRate = 0.05;
 
-  // Calculate total price
   const totalAmount = selectedItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
-  // Calculate GST and restaurant charges
   const gstAmount = totalAmount * gstRate;
   const restaurantCharge = totalAmount * restaurantChargeRate;
 
-  // Final total after adding GST and restaurant charges
   const finalTotal = totalAmount + gstAmount + restaurantCharge;
 
-  const handlePlaceOrder = async() => {
-    console.log(selectedItems);
+  const handlePlaceOrder = async () => {
+    console.log("selectedItems: ", selectedItems);
 
-    const response = placeOrder(selectedItems);
-    console.log(response);
-  }
+    const response = await placeOrder(selectedItems);
+    console.log("response : ", response);
+    setMessage(response);
+    if (response.status) {
+      setTimeout(() => {
+        toggleShowOrderPopup();
+        setSelectedItems([]);
+      }, 3000);
+    }
+  };
+
+  // Handle increasing the quantity of an item
+  const handleIncreaseQuantity = (index) => {
+    const updatedItems = [...selectedItems];
+    updatedItems[index].quantity += 1;
+    setSelectedItems(updatedItems);
+  };
+
+  // Handle decreasing the quantity of an item
+  const handleDecreaseQuantity = (index) => {
+    const updatedItems = [...selectedItems];
+
+    // If quantity becomes 0, remove the item
+    if (updatedItems[index].quantity === 1) {
+      updatedItems.splice(index, 1);
+    } else {
+      updatedItems[index].quantity -= 1;
+    }
+
+    setSelectedItems(updatedItems);
+  };
 
   return (
     <div>
@@ -53,13 +78,21 @@ const ShowOrderPopup = (props) => {
                     <div className="w-40">{orderItem.item}</div>
                     <div className="w-20">{orderItem.size}</div>
                     <div className="w-20">{`$${orderItem.price}`}</div>
-                    <div className="w-24">{`Quantity: ${orderItem.quantity}`}</div>
+                    <div className="w-8 px-3 mx-2 bg-red-100 rounded-md cursor-pointer hover:bg-red-300" onClick={() => handleDecreaseQuantity(index)}>
+                      -
+                    </div>
+                    <div className="w-32">{`Quantity: ${orderItem.quantity}`}</div>
+                    <div className="w-8 px-3 mx-2 bg-emerald-100 rounded-md cursor-pointer hover:bg-emerald-300" onClick={() => handleIncreaseQuantity(index)}>
+                      +
+                    </div>
                   </div>
                 ))}
                 <div className="mt-4 mr-2 text-md font-semibold text-right">
                   <div>Total: ${totalAmount.toFixed(2)}</div>
                   <div>GST (18%): ${gstAmount.toFixed(2)}</div>
-                  <div>Restaurant Charge (5%): ${restaurantCharge.toFixed(2)}</div>
+                  <div>
+                    Restaurant Charge (5%): ${restaurantCharge.toFixed(2)}
+                  </div>
                   <div className="mt-2 font-bold text-xl">
                     Final Total: ${finalTotal.toFixed(2)}
                   </div>
@@ -67,6 +100,15 @@ const ShowOrderPopup = (props) => {
               </div>
             )}
           </div>
+          {message && (
+            <p
+              className={`${
+                message.status ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {message.message}
+            </p>
+          )}
           <div className="mt-4 flex items-center justify-between">
             <button
               onClick={handlePlaceOrder}

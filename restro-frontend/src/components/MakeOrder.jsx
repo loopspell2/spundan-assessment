@@ -111,6 +111,7 @@ const MakeOrder = ({ menuItems }) => {
         <ShowOrderPopup
         toggleShowOrderPopup={toggleShowOrderPopup}
         selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
         />
       )}
 
